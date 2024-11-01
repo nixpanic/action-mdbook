@@ -1,0 +1,43 @@
+---
+name: Build and optionally publish the container-image
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
+    paths:
+      - Containerfile
+      - .github/workflows/build-container.yaml
+  workflow_dispatch:
+
+jobs:
+  build_and_publish:
+    name: Publish container-image on ghcr.io
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build the mdBook container-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ghcr.io/${{ github.repository }}
+          tags: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
+          containerfiles: Containerfile
+
+      - name: Push the container-image to ghcr.io
+        if: github.ref_name == 'main' || github.ref_type == 'tag'
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          registry: ghcr.io
+          image: ghcr.io/${{ github.repository }}
+          tags: ${{ github.ref_type == 'tag' && github.ref_name || 'latest' }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
