@@ -8,6 +8,8 @@ on:
     branches:
       - main
     paths:
+      - Cargo.lock
+      - Cargo.toml
       - Containerfile
       - .github/workflows/build-container.yaml
   workflow_dispatch:
