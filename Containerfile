@@ -15,12 +15,13 @@ RUN true \
 # build mdbook
 RUN true \
     && cargo install --git https://github.com/rust-lang/mdBook.git --root /usr/local mdbook \
+    && cargo install --git https://github.com/john-cd/mdbook-utils --root /usr/local mdbook-utils \
     && true
 
 # final container without development tools
 FROM updated_base AS mdbook
 
-COPY --from=builder /usr/local/bin/mdbook /usr/local/bin/mdbook
+COPY --from=builder /usr/local/bin/mdbook* /usr/local/bin/
 
 WORKDIR /build/book
 
