@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora-minimal:44 AS updated_base
+FROM quay.io/fedora/fedora-minimal:45 AS updated_base
 
 RUN true \
     && microdnf -y update \
